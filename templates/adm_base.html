@@ -1,0 +1,330 @@
+{% load staticfiles %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}欢迎登录金融资产交易信息管理系统{% endblock %}</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="shortcut icon" href="{% static 'img/ecust-logo.ico' %}"/>
+    <link rel="bookmark" href="{% static 'img/ecust-logo.ico' %}"/>
+    {% block css %}
+        <!-- Bootstrap 3.3.6 -->
+        <link rel="stylesheet" href="{% static 'AdminLTE/bootstrap/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'AdminLTE/plugins/select2/select2.css' %}">
+        <!-- Font Awesome -->
+        <link rel="stylesheet"
+              href="{% static 'AdminLTE/plugins/font-awesome.min.css' %}">
+        <!-- Ionicons -->
+        <link rel="stylesheet" href="{% static 'AdminLTE/plugins/ionicons.min.css' %}">
+        <!-- Theme style -->
+        <link rel="stylesheet" href="{% static 'AdminLTE/dist/css/AdminLTE.min.css' %}">
+        <!-- AdminLTE Skins. Choose a skin from the css/skins
+             folder instead of downloading all of them to reduce the load. -->
+        <link rel="stylesheet" href="{% static 'AdminLTE/dist/css/skins/_all-skins.min.css' %}">
+        <!-- iCheck -->
+        <link rel="stylesheet" href="{% static 'AdminLTE/plugins/iCheck/flat/blue.css' %}">
+        <!-- Morris chart -->
+        <link rel="stylesheet" href="{% static 'AdminLTE/plugins/morris/morris.css' %}">
+        <!-- jvectormap -->
+        <link rel="stylesheet" href="{% static 'AdminLTE/plugins/jvectormap/jquery-jvectormap-1.2.2.css' %}">
+        <!-- Date Picker -->
+        <link rel="stylesheet" href="{% static 'AdminLTE/plugins/datepicker/datepicker3.css' %}">
+        <!-- Daterange picker -->
+        <link rel="stylesheet" href="{% static 'AdminLTE/plugins/daterangepicker/daterangepicker.css' %}">
+        <!-- bootstrap wysihtml5 - text editor -->
+        <link rel="stylesheet" href="{% static 'AdminLTE/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css' %}">
+        <!-- datatable - table tools -->
+        <link rel="stylesheet" href="{% static 'AdminLTE/plugins/datatables/dataTables.bootstrap.css' %}">
+        <link rel="stylesheet" href="{% static 'AdminLTE/plugins/datatables/jquery.dataTables.min.css' %}">
+        <link rel="stylesheet" href="{% static 'AdminLTE/plugins/datatables/jquery.dataTables_themeroller.css' %}">
+        <!-- Select2 下拉框工具 -->
+        <link rel="stylesheet" href="{% static 'AdminLTE/plugins/select2/select2.min.css' %}">
+        <!-- DataTable Buttons 导出数据工具 -->
+        <link rel="stylesheet"
+              href="{% static 'AdminLTE/plugins/datatables/extensions/Buttons/buttons.dataTables.min.css' %}">
+
+        <link rel="stylesheet" href="{% static 'AdminLTE/plugins/morris/morris.css' %}">
+
+        <link rel="stylesheet" href="{% static 'AdminLTE/bower_components/morris.js/morris.css' %}">
+
+        <!-- jvectormap -->
+        <link rel="stylesheet" href="{% static 'AdminLTE/bower_components/jvectormap/jquery-jvectormap.css' %}">
+
+        <!-- Date Picker -->
+        <link rel="stylesheet"
+              href="{% static 'AdminLTE/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css' %}">
+
+        <!-- Daterange picker -->
+        <link rel="stylesheet"
+              href="{% static 'AdminLTE/bower_components/bootstrap-daterangepicker/daterangepicker.css' %}">
+
+        <!-- Google Font -->
+        <link rel="stylesheet"
+              href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    {% endblock %}
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+  <script src="{% static 'AdminLTE/plugins/html5shiv.min.js' %}"></script>
+  <script src="{% static 'AdminLTE/plugins/respond.min.js' %}"></script>
+  <![endif]-->
+
+</head>
+
+<body class="hold-transition skin-yellow-light sidebar-mini">
+
+<div class="wrapper">
+    <header class="main-header">
+        <a href="{% url 'tradingSystem:adm_index' %}" class="logo">
+            <span class="logo-lg"><b>金融资产交易信息管理系统</b></span>
+        </a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top">
+            <!-- Sidebar toggle button-->
+            <a class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                <span class="sr-only">Toggle navigation</span>
+            </a>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <ul class="nav navbar-nav">
+                        <!-- User Account: style can be found in dropdown.less -->
+                        <li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <img src="{{ request.session.photo_url }}" class="user-image" alt="管理员头像">
+                                <span class="hidden-xs">{{ request.session.username }}</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- User image -->
+                                <li class="user-header">
+                                    <img src="{{ request.session.photo_url }}" class="img-circle"
+                                         alt="管理员头像">
+                                    <p>
+                                        {{ request.session.user_name }}
+                                        <small>{{ request.session.user_id }}</small>
+                                    </p>
+                                </li>
+
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        <a href="{% url 'tradingSystem:user_profile' %}"
+                                           class="btn btn-default btn-flat">信息设置</a>
+                                    </div>
+                                    <div class="pull-right">
+                                        <a href="{% url 'tradingSystem:log_out' %}" class="btn btn-default btn-flat">登出系统</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Control Sidebar Toggle Button -->
+                        <li>
+                            <a href="{% url 'tradingSystem:log_out' %}"><i class="fa fa-sign-out"></i></a>
+                        </li>
+                    </ul>
+                    {% block custom_nav %}
+                        <!-- 不同用户自定义的顶部的导航栏 -->
+                    {% endblock %}
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+            <!-- Sidebar user panel -->
+            <div class="user-panel">
+                {% if request.session %}
+                    <div class="pull-left image" href="{% url 'tradingSystem:user_profile' %}">
+                        {% block user_head_img %}
+                            <img src="{{ request.session.photo_url }}" style="width: 50px;height: 50px;"
+                                 class="img-circle" alt="用户头像" href="{% url 'tradingSystem:user_profile' %}">
+                        {% endblock %}
+                    </div>
+                    <div class="pull-left info">
+                        <p>{{ request.user.username }}</p>
+                        <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                    </div>
+                {% else %}
+                    <div>您尚未注册，点我<a style="color:yellowgreen" href="{% url 'tradingSystem:register' %}">注册</a></div>
+                {% endif %}
+            </div>
+            <!-- sidebar menu: : style can be found in sidebar.less -->
+            <ul class="sidebar-menu" data-widget="tree">
+                {% if request.session %}
+                    <li class="header">导航栏</li>
+                    <li class="active">
+                        <a href="{% url 'tradingSystem:adm_index' %}">
+                            <i class="fa fa-dashboard"></i> <span>首页</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-refresh fa-spin pull-right"></i>
+                            </span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'tradingSystem:adm_user' %}">
+                            <i class="fa fa-th"></i> <span>用户信息管理</span>
+                            <span class="pull-right-container">
+                          <small class="label pull-right bg-green">{{ request.session.user_num }}</small></span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'tradingSystem:adm_stock' %}">
+                            <i class="fa fa-thumbs-up"></i> <span>管理股票列表</span>
+                            <span class="pull-right-container">
+                          <small class="label pull-right bg-red">{{ request.session.stock_num }}</small></span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'tradingSystem:adm_trading' %}">
+                            <i class="fa fa-thumbs-up"></i> <span>管理交易记录</span>
+                            <span class="pull-right-container">
+                          </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'tradingSystem:uphold' %}">
+                            <i class="fa fa-thumbs-up"></i> <span>维护每日股票信息</span>
+                            <span class="pull-right-container">
+                          </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'tradingSystem:adm_news' %}">
+                            <i class="fa fa-comment-o"></i> <span>新闻管理</span>
+                            <span class="pull-right-container">
+                          </span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'tradingSystem:adm_comment' %}">
+                            <i class="fa fa-comment-o"></i> <span>评论管理</span>
+                            <span class="pull-right-container">
+                          </span>
+                        </a>
+                    </li>
+
+                {% endif %}
+            </ul>
+        </section>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        {% block content %}
+
+
+
+        {% endblock %}
+
+    </div>
+    <!-- /.content-wrapper -->
+    <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+            <b>Version</b> 1.0.1
+        </div>
+        <strong>Copyright &copy; 2023-<a href="https://www.ecust.edu.cn/" target="_blank">East China University of Science and
+            Technology</a>.</strong> All rights
+        reserved.
+    </footer>
+</div>
+
+<!-- ./wrapper -->
+<!-- 这些是默认加载的js脚本 -->
+<!-- jQuery 2.2.3 -->
+<script src="{% static 'AdminLTE/plugins/jQuery/jquery-2.2.3.min.js' %}"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="{% static 'AdminLTE/plugins/jQueryUI/jquery-ui.min.js' %}"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+    $.widget.bridge('uibutton', $.ui.button);
+</script>
+<!-- Bootstrap 3.3.6 -->
+<script src="{% static 'AdminLTE/bootstrap/js/bootstrap.min.js' %}"></script>
+<!-- DataTables -->
+<script src="{% static 'AdminLTE/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'AdminLTE/plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+<script src="{% static 'AdminLTE/plugins/echarts.js' %}"></script>
+<!-- SlimScroll -->
+<script src="{% static 'AdminLTE/plugins/slimScroll/jquery.slimscroll.min.js' %}"></script>
+<!-- FastClick -->
+<script src="{% static 'AdminLTE/plugins/fastclick/fastclick.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'AdminLTE/dist/js/app.min.js' %}"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{% static 'AdminLTE/dist/js/demo.js' %}"></script>
+<!-- Select2-->
+<script src="{% static 'AdminLTE/plugins/select2/select2.full.min.js' %}"></script>
+<!-- page script -->
+<!-- CK Editor -->
+{% comment %}
+<script src="{% static 'ckeditor.js' %}"></script>
+{% endcomment %}
+<!-- Bootstrap WYSIHTML5 -->
+<script src="{% static 'AdminLTE/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js' %}"></script>
+<script src="{% static 'AdminLTE/plugins/iCheck/icheck.min.js' %}"></script>
+
+<!-- Datatable Export Data Buttons -->
+<script src="{% static 'AdminLTE/plugins/datatables/extensions/Buttons/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'AdminLTE/plugins/datatables/extensions/Buttons/jszip.min.js' %}"></script>
+<script src="{% static 'AdminLTE/plugins/datatables/extensions/Buttons/pdfmake.min.js' %}"></script>
+<script src="{% static 'AdminLTE/plugins/datatables/extensions/Buttons/vfs_fonts.js' %}"></script>
+<script src="{% static 'AdminLTE/plugins/datatables/extensions/Buttons/buttons.flash.min.js' %}"></script>
+<script src="{% static 'AdminLTE/plugins/datatables/extensions/Buttons/buttons.html5.min.js' %}"></script>
+<script src="{% static 'AdminLTE/plugins/datatables/extensions/Buttons/buttons.print.min.js' %}"></script>
+
+<script src="{% static 'AdminLTE/plugins/knob/jquery.knob.js' %}"></script>
+<script src="{% static 'AdminLTE/plugins/morris/morris.js' %}"></script>
+
+<script src="{% static 'AdminLTE/bower_components/morris.js/morris.min.js' %}"></script>
+<!-- Sparkline -->
+<script src="{% static 'AdminLTE/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js' %}"></script>
+<!-- jvectormap -->
+<script src="{% static 'AdminLTE/bower_components/jvectormap/jquery-jvectormap.js' %}"></script>
+
+<!-- jQuery Knob Chart -->
+<script src="{% static 'AdminLTE/bower_components/jquery-knob/dist/jquery.knob.min.js' %}"></script>
+
+<script src="{% static 'AdminLTE/bower_components/moment/min/moment.min.js' %}"></script>
+<!-- daterangepicker -->
+<script src="{% static 'AdminLTE/bower_components/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
+<!-- datepicker -->
+<script src="{% static 'AdminLTE/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script>
+
+<!-- Slimscroll -->
+<script src="{% static 'AdminLTE/bower_components/jquery-slimscroll/jquery.slimscroll.min.js' %}"></script>
+
+<!-- FastClick -->
+<script src="{% static 'AdminLTE/bower_components/fastclick/lib/fastclick.js' %}"></script>
+
+<!-- Echart -->
+<script src="{% static 'AdminLTE/plugins/echarts.js' %}"></script>
+
+<script>
+    {% comment %}
+    $(function () {
+        // Replace the <textarea id="editor1"> with a CKEditor
+        // instance, using default configuration.
+        CKEDITOR.replace('editor1', { height: '380px', width: '100%' });
+        //bootstrap WYSIHTML5 - text editor
+        $(".textarea").wysihtml5();
+    });
+    {% endcomment %}
+</script>
+{% block script %}
+
+{% endblock %}
+
+</body>
+</html>

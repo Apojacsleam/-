@@ -1,0 +1,555 @@
+{% extends "mybase.html" %}
+{% load static %}
+{% load staticfiles %}
+{% block title %}欢迎登录金融资产交易信息管理系统{% endblock %}
+
+{% block content %}
+
+    <section class="content-header">
+
+    </section>
+
+    <section class="content">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">股票信息列表</h3>
+                <div class="box-header ">
+                </div>
+
+                <div class="box-body">
+                    <table id="stock_table" class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th>股票代号</th>
+                            <th>股票名称</th>
+                            <th>发行时间</th>
+                            <th>昨日收盘价（元）</th>
+                            <th>最新价格（元）</th>
+                            <th>股票交易所</th>
+                            <th>所处行业</th>
+                            <th>涨跌幅（%）</th>
+                            <th>详情</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {% for item in stock %}
+                            {% if item.change_extent > 0 %}
+                                <tr style="color: red">
+                                    <td>{{ item.stock_id }}</td>
+                                    <td>{{ item.stock_name }}</td>
+                                    <td>{{ item.issuance_time }}</td>
+                                    <td>{{ item.closing_price_y }}</td>
+                                    <td>{{ item.open_price_t }}</td>
+                                    <td>{{ item.stock_type }}</td>
+                                    <td>{{ item.block }}</td>
+                                    <td>{{ item.change_extent }}</td>
+                                    <td style="vertical-align: middle">
+                                        <a href="{% url 'tradingSystem:stock_info' item.stock_id %}">详情</a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr style="color: green">
+                                    <td>{{ item.stock_id }}</td>
+                                    <td>{{ item.stock_name }}</td>
+                                    <td>{{ item.issuance_time }}</td>
+                                    <td>{{ item.closing_price_y }}</td>
+                                    <td>{{ item.open_price_t }}</td>
+                                    <td>{{ item.stock_type }}</td>
+                                    <td>{{ item.block }}</td>
+                                    <td>{{ item.change_extent }}</td>
+                                    <td style="vertical-align: middle">
+                                        <a href="{% url 'tradingSystem:stock_info' item.stock_id %}">详情</a>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-md-8">
+                {#                <div class="box box-solid bg-teal-gradien">#}
+                <div class="box box-solid">
+                    <div class="box-header">
+                        <i class="fa fa-th"></i>
+
+                        <h3 class="box-title">看大盘</h3>
+
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn bg-teal btn-sm" data-widget="collapse"><i
+                                    class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn bg-teal btn-sm" data-widget="remove"><i
+                                    class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div id="stock-chart" style="height:500px;"></div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer no-border">
+                        {% comment %}
+                        <div class="row">
+
+                            <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
+                                <input type="text" class="knob" data-readonly="true" value="20" data-width="60"
+                                       data-height="60"
+                                       data-fgColor="#39CCCC">
+
+                                <div class="knob-label">Mail-Orders</div>
+                            </div>
+
+                            <!-- ./col -->
+                            <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
+                                <input type="text" class="knob" data-readonly="true" value="50" data-width="60"
+                                       data-height="60"
+                                       data-fgColor="#39CCCC">
+
+                                <div class="knob-label">Online</div>
+                            </div>
+                            <!-- ./col -->
+                            <div class="col-xs-4 text-center">
+                                <input type="text" class="knob" data-readonly="true" value="30" data-width="60"
+                                       data-height="60"
+                                       data-fgColor="#39CCCC">
+
+                                <div class="knob-label">In-Store</div>
+                            </div>
+                            <!-- ./col -->
+                        </div>
+                        {% endcomment %}
+                        <!-- /.row -->
+                    </div>
+                    <!-- /.box-footer -->
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+
+        </div>
+
+    </section>
+{% endblock %}
+{% block script %}
+    <script>
+
+        $(function () {
+            $(".select2").select2();
+        });
+        $(function () {
+            var table = $('#stock_table').DataTable({
+                dom: 'Bfrtip',
+                buttons: [],
+                "paging": true, <!-- 允许分页 -->
+                "lengthChange": true, <!-- 允许改变每页显示的行数 -->
+                "searching": true, <!-- 允许内容搜索 -->
+                "ordering": true, <!-- 允许排序 -->
+                "info": true, <!-- 显示信息 -->
+                "autoWidth": false, <!-- 固定宽度 -->
+                "language": {
+                    "sProcessing": "处理中...",
+                    "sLengthMenu": "显示 _MENU_ 项结果",
+                    "sZeroRecords": "没有匹配结果",
+                    "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                    "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
+                    "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                    "sInfoPostFix": "",
+                    "sSearch": "搜索:",
+                    "sUrl": "",
+                    "sEmptyTable": "表中数据为空",
+                    "sLoadingRecords": "载入中...",
+                    "sInfoThousands": ",",
+                    "oPaginate": {
+                        "sFirst": "首页",
+                        "sPrevious": "上页",
+                        "sNext": "下页",
+                        "sLast": "末页"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": 以升序排列此列",
+                        "sSortDescending": ": 以降序排列此列"
+                    }
+                },
+                "columnDefs": [{
+                    "searchable": false,
+                    "orderable": true,
+                    "targets": 0
+                }],
+                "order": [[0, 'asc']]
+            });
+
+            $('#stock_table').on('click', 'tr', function (e) {
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                } else {
+                    table.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+            });
+
+            $('.select2').select2();
+        });
+
+
+        $(document).ready(function () {
+
+//            $(".name").click
+
+
+            /*基于准备好的dom，初始化echarts实例*/
+            var myChart = echarts.init(document.getElementById('stock-chart'));
+
+            // 数据意义：开盘(open)，收盘(close)，最低(lowest)，最高(highest)
+            var data0 = splitData([
+                ['2023/01/03', 3087.513, 3116.5119, 3073.054, 3119.8556],
+                ['2023/01/04', 3117.5711, 3123.5164, 3109.4512, 3129.0937],
+                ['2023/01/05', 3132.7614, 3155.2162, 3130.23, 3159.427],
+                ['2023/01/06', 3155.0747, 3157.6365, 3151.8407, 3170.7418],
+                ['2023/01/09', 3169.3737, 3176.0845, 3165.4282, 3183.583],
+                ['2023/01/10', 3178.022, 3169.5072, 3165.1446, 3178.1569],
+                ['2023/01/11', 3172.3759, 3161.8376, 3160.8896, 3184.757],
+                ['2023/01/12', 3167.273, 3163.4509, 3153.4038, 3171.5905],
+                ['2023/01/13', 3170.3548, 3195.3059, 3167.5098, 3195.3067],
+                ['2023/01/16', 3198.5189, 3227.5916, 3197.3186, 3251.3739],
+                ['2023/01/17', 3229.4354, 3224.2448, 3211.7573, 3231.2645],
+                ['2023/01/18', 3227.5947, 3224.406, 3220.3703, 3234.8169],
+                ['2023/01/19', 3221.5179, 3240.2794, 3210.3825, 3240.2794],
+                ['2023/01/20', 3247.2031, 3264.8138, 3247.2031, 3267.0579],
+                ['2023/01/30', 3308.8694, 3269.318, 3266.758, 3310.4903],
+                ['2023/01/31', 3266.1442, 3255.6692, 3252.0145, 3277.2524],
+                ['2023/02/01', 3262.1961, 3284.9213, 3245.4113, 3284.9224],
+                ['2023/02/02', 3291.7828, 3285.6705, 3272.414, 3295.7636],
+                ['2023/02/03', 3275.6578, 3263.4059, 3235.3533, 3275.6578],
+                ['2023/02/06', 3244.7007, 3238.6978, 3226.2112, 3250.3514],
+                ['2023/02/07', 3245.2297, 3248.094, 3233.8334, 3250.033],
+                ['2023/02/08', 3251.5006, 3232.1063, 3230.4393, 3257.114],
+                ['2023/02/09', 3227.7278, 3270.3826, 3225.7724, 3270.3826],
+                ['2023/02/10', 3266.4367, 3260.6734, 3247.2296, 3269.9944],
+                ['2023/02/13', 3256.9881, 3284.1599, 3252.6327, 3285.0913],
+                ['2023/02/14', 3288.9742, 3293.2825, 3279.1894, 3293.7338],
+                ['2023/02/15', 3294.015, 3280.4919, 3274.5505, 3296.1995],
+                ['2023/02/16', 3281.7352, 3249.0295, 3231.3421, 3308.8279],
+                ['2023/02/17', 3244.7325, 3224.0243, 3223.2581, 3262.4729],
+                ['2023/02/20', 3230.4728, 3290.3383, 3225.8427, 3291.0388],
+                ['2023/02/21', 3291.6312, 3306.5236, 3282.436, 3308.7908],
+                ['2023/02/22', 3292.0489, 3291.1477, 3286.7207, 3307.0343],
+                ['2023/02/23', 3293.5219, 3287.477, 3275.3621, 3307.4385],
+                ['2023/02/24', 3287.2553, 3267.1597, 3253.9748, 3288.3922],
+                ['2023/02/27', 3256.9998, 3258.0344, 3251.7213, 3276.5791],
+                ['2023/02/28', 3265.742, 3279.6053, 3246.1446, 3280.4154],
+                ['2023/03/01', 3279.1364, 3312.3478, 3272.0351, 3315.1604],
+                ['2023/03/02', 3308.0113, 3310.6536, 3306.4554, 3320.7441],
+                ['2023/03/03', 3314.7727, 3328.3927, 3302.6231, 3330.6046],
+                ['2023/03/06', 3332.0235, 3322.0259, 3308.7255, 3333.0619],
+                ['2023/03/07', 3320.211, 3285.0988, 3284.4099, 3342.8585],
+                ['2023/03/08', 3271.8798, 3283.2479, 3263.6927, 3283.2479],
+                ['2023/03/09', 3285.9427, 3276.0937, 3259.9999, 3289.06],
+                ['2023/03/10', 3255.5121, 3230.0766, 3229.4959, 3262.147],
+                ['2023/03/13', 3228.1239, 3268.6955, 3228.1239, 3268.6955],
+                ['2023/03/14', 3261.9219, 3245.3123, 3216.9927, 3262.0025],
+                ['2023/03/15', 3261.0284, 3263.3148, 3256.8566, 3273.1232],
+                ['2023/03/16', 3244.4699, 3226.8912, 3224.7223, 3257.433],
+                ['2023/03/17', 3245.2604, 3250.546, 3240.157, 3279.9228],
+                ['2023/03/20', 3253.9302, 3234.9103, 3231.6459, 3267.9931],
+                ['2023/03/21', 3240.8388, 3255.6505, 3237.8934, 3255.9997],
+                ['2023/03/22', 3263.4129, 3265.7475, 3255.7394, 3279.3938],
+                ['2023/03/23', 3258.7791, 3286.6491, 3252.9917, 3286.6491],
+                ['2023/03/24', 3282.739, 3265.6537, 3260.8444, 3282.739],
+                ['2023/03/27', 3261.8235, 3251.3971, 3229.7037, 3261.8235],
+                ['2023/03/28', 3256.6023, 3245.376, 3241.7368, 3264.0978],
+                ['2023/03/29', 3253.6212, 3240.0568, 3229.5848, 3254.5564],
+                ['2023/03/30', 3243.0683, 3261.2485, 3220.9846, 3263.7379],
+                ['2023/03/31', 3263.4061, 3272.8602, 3260.0396, 3278.4231],
+                ['2023/04/03', 3277.34, 3296.396, 3276.4158, 3299.7321],
+                ['2023/04/04', 3297.183, 3312.5578, 3290.9925, 3312.5615],
+                ['2023/04/06', 3302.751, 3312.628, 3296.055, 3314.5262],
+                ['2023/04/07', 3312.4813, 3327.6457, 3308.061, 3328.8455],
+                ['2023/04/10', 3331.5051, 3315.3578, 3309.9171, 3332.7152],
+                ['2023/04/11', 3317.0771, 3313.5705, 3298.2498, 3317.4484],
+                ['2023/04/12', 3316.8623, 3327.1816, 3315.3991, 3330.7079],
+                ['2023/04/13', 3321.2733, 3318.3638, 3309.2515, 3334.4697],
+                ['2023/04/14', 3326.3704, 3338.1525, 3316.8101, 3340.0764],
+                ['2023/04/17', 3337.0605, 3385.6095, 3336.3881, 3385.6095],
+                ['2023/04/18', 3379.2267, 3393.3312, 3375.7803, 3396.1745],
+                ['2023/04/19', 3391.3549, 3370.1283, 3364.6419, 3394.959],
+                ['2023/04/20', 3367.0525, 3367.031, 3344.016, 3371.3679],
+                ['2023/04/21', 3363.9987, 3301.2575, 3301.2575, 3367.6093],
+                ['2023/04/24', 3300.8125, 3275.413, 3264.9349, 3303.0908],
+                ['2023/04/25', 3276.403, 3264.8717, 3229.4461, 3288.5685],
+                ['2023/04/26', 3255.2171, 3264.1006, 3239.9893, 3277.9797],
+                ['2023/04/27', 3256.2278, 3285.8844, 3253.1117, 3299.301],
+                ['2023/04/28', 3283.1224, 3323.2746, 3283.1224, 3324.8808],
+                ['2023/05/04', 3306.4827, 3350.4587, 3302.0275, 3352.7463],
+                ['2023/05/05', 3350.6538, 3334.5028, 3321.1872, 3364.1417],
+                ['2023/05/08', 3340.9904, 3395.0036, 3340.9904, 3400.1766],
+                ['2023/05/09', 3402.3938, 3357.6707, 3356.1183, 3418.9534],
+                ['2023/05/10', 3347.7015, 3319.1506, 3305.2506, 3349.7213],
+                ['2023/05/11', 3323.6583, 3309.5512, 3307.2887, 3333.2496],
+                ['2023/05/12', 3304.4582, 3272.3619, 3271.4311, 3319.1307],
+                ['2023/05/15', 3269.8781, 3310.7367, 3235.8679, 3310.7367],
+                ['2023/05/16', 3310.1607, 3290.9874, 3282.4918, 3317.9012],
+                ['2023/05/17', 3281.9664, 3284.232, 3269.8936, 3298.519],
+                ['2023/05/18', 3288.4112, 3297.3199, 3284.1679, 3313.8622],
+                ['2023/05/19', 3288.8911, 3283.5417, 3268.2242, 3302.3424],
+                ['2023/05/22', 3278.596, 3296.4696, 3276.5398, 3308.5325],
+                ['2023/05/23', 3294.7877, 3246.238, 3246.238, 3298.2257],
+                ['2023/05/24', 3237.7045, 3204.7494, 3204.3813, 3237.7045],
+                ['2023/05/25', 3197.3644, 3201.2605, 3168.5716, 3207.021],
+                ['2023/05/26', 3198.8825, 3212.5038, 3179.8217, 3220.7737],
+                ['2023/05/29', 3219.7553, 3221.4484, 3208.955, 3230.9706],
+                ['2023/05/30', 3214.6728, 3224.2133, 3186.6256, 3230.6317],
+                ['2023/05/31', 3214.6551, 3204.5644, 3190.2736, 3216.3597],
+                ['2023/06/01', 3196.1547, 3204.6345, 3189.5174, 3225.093],
+                ['2023/06/02', 3212.4489, 3230.0686, 3211.737, 3233.9916],
+                ['2023/06/05', 3231.8108, 3232.441, 3221.6254, 3244.1801],
+                ['2023/06/06', 3228.4068, 3195.3404, 3189.2692, 3247.349],
+                ['2023/06/07', 3197.4677, 3197.7587, 3188.0053, 3210.3295]
+            ]);
+
+            //切割数组，把数组中的日期和数据分离，返回数组中的日期和数据
+            function splitData(rawData) {
+                var categoryData = [];
+                var values = [];
+
+                for (var i = 0; i < rawData.length; i++) {
+                    //splice 返回每组数组中被删除的第一项，即返回数组中被删除的日期
+                    //alert(rawData[i].splice(0, 1)[0]);
+                    //categoryData  日期  把返回的日期放到categoryData[]数组中
+                    categoryData.push(rawData[i].splice(0, 1)[0]);
+                    //alert(categoryData);
+
+                    //数据数组，即数组中除日期外的数据
+                    // alert(rawData[i]);
+                    values.push(rawData[i])
+                }
+                return {
+                    categoryData: categoryData, //数组中的日期 x轴对应的日期
+                    values: values              //数组中的数据 y轴对应的数据
+                };
+            }
+
+            //计算MA平均线，N日移动平均线=N日收盘价之和/N  dayCount要计算的天数(5,10,20,30)
+            function calculateMA(dayCount) {
+                var result = [];
+                for (var i = 0, len = data0.values.length; i < len; i++) {
+                    if (i < dayCount) {
+                        result.push('-');
+                        //alert(result);
+                        continue;   //结束单次循环，即不输出本次结果
+                    }
+                    var sum = 0;
+                    for (var j = 0; j < dayCount; j++) {
+                        //收盘价总和
+                        sum += data0.values[i - j][1];
+                        //alert(sum);
+                    }
+                    result.push(sum / dayCount);
+                    // alert(result);
+                }
+                return result;
+            }
+
+
+            option = {
+                title: {    //标题
+                    text: '上证指数',
+                    left: 0
+                },
+                tooltip: {  //提示框
+                    trigger: 'axis',    //触发类型：坐标轴触发
+                    axisPointer: {  //坐标轴指示器配置项
+                        type: 'cross'   //指示器类型，十字准星
+                    }
+                },
+                legend: {   //图例控件，点击图例控制哪些系列不现实
+                    data: ['日K', 'MA5', 'MA10', 'MA20', 'MA30']
+                },
+                grid: {     //直角坐标系
+                    show: true,
+                    left: '5%',    //grid组件离容器左侧的距离
+                    right: '10%',
+                    bottom: '5%',
+                    //backgroundColor:'#ccc'
+                },
+                xAxis: {
+                    type: 'category',   //坐标轴类型，类目轴
+                    data: data0.categoryData,
+                    //scale: true,  //只在数字轴中有效
+                    boundaryGap: false,    //刻度作为分割线，标签和数据点会在两个刻度上
+                    axisLine: {onZero: false},
+                    splitLine: {show: false},   //是否显示坐标轴轴线
+                    //splitNumber: 20,    //坐标轴的分割段数，预估值，在类目轴中无效
+                    min: 'dataMin', //特殊值，数轴上的最小值作为最小刻度
+                    max: 'dataMax'  //特殊值，数轴上的最大值作为最大刻度
+                },
+                yAxis: {
+                    scale: true,    //坐标刻度不强制包含零刻度
+                    splitArea: {
+                        show: true  //显示分割区域
+                    }
+                },
+                dataZoom: [     //用于区域缩放
+                    {
+                        filterMode: 'filter',    //当前数据窗口外的数据被过滤掉来达到数据窗口缩放的效果  默认值filter
+                        type: 'inside', //内置型数据区域缩放组件
+                        start: 50,      //数据窗口范围的起始百分比
+                        end: 100        //数据窗口范围的结束百分比
+                    },
+                    {
+                        show: true,
+                        type: 'slider', //滑动条型数据区域缩放组件
+                        y: '90%',
+                        start: 50,
+                        end: 100
+                    }
+                ],
+                series: [   //图表类型
+                    {
+                        name: '日K',
+                        type: 'candlestick',    //K线图
+                        data: data0.values,     //y轴对应的数据
+
+                        ////////////////////////图标标注/////////////////////////////
+
+                        markPoint: {    //图表标注
+                            label: {    //标注的文本
+                                normal: {   //默认不显示标注
+                                    show: true,
+                                    //position:['20%','30%'],
+                                    formatter: function (param) {   //标签内容控制器
+                                        return param != null ? Math.round(param.value) : '';
+                                    }
+                                }
+                            },
+                            data: [     //标注的数据数组
+                                {
+                                    name: 'XX标点',
+                                    coord: ['2013/5/31', 2300], //指定数据的坐标位置
+                                    value: 2300,
+                                    itemStyle: {    //图形样式
+                                        normal: {color: 'rgb(41,60,85)'}
+                                    }
+                                },
+                                {
+                                    name: 'highest value',
+                                    type: 'max',    //最大值
+                                    valueDim: 'highest'     //在highest维度上的最大值 最高价
+                                },
+                                {
+                                    name: 'lowest value',
+                                    type: 'min',
+                                    valueDim: 'lowest'  //最低价
+                                },
+                                {
+                                    name: 'average value on close',
+                                    type: 'average',
+                                    valueDim: 'close'   //收盘价
+                                }
+                            ],
+                            tooltip: {      //提示框
+                                formatter: function (param) {
+                                    return param.name + '<br>' + (param.data.coord || '');
+                                }
+                            }
+                        },
+
+/////////////////////////////////图标标线///////////////////////////
+
+                        markLine: {
+                            symbol: ['none', 'none'],   //标线两端的标记类型
+                            data: [
+                                [
+                                    {
+                                        name: 'from lowest to highest',
+                                        type: 'min',    //设置该标线为最小值的线
+                                        valueDim: 'lowest', //指定在哪个维度上的最小值
+                                        symbol: 'circle',
+                                        symbolSize: 10, //起点标记的大小
+                                        label: {    //normal默认，emphasis高亮
+                                            normal: {show: false},  //不显示标签
+                                            emphasis: {show: false} //不显示标签
+                                        }
+                                    },
+                                    {
+                                        type: 'max',
+                                        valueDim: 'highest',
+                                        symbol: 'circle',
+                                        symbolSize: 10,
+                                        label: {
+                                            normal: {show: false},
+                                            emphasis: {show: false}
+                                        }
+                                    }
+                                ],
+
+                                {
+                                    name: 'min line on close',
+                                    type: 'min',
+                                    valueDim: 'close'
+                                },
+                                {
+                                    name: 'max line on close',
+                                    type: 'max',
+                                    valueDim: 'close'
+                                }
+                            ]
+
+                        }
+
+                    },
+
+                    {   //MA5 5天内的收盘价之和/5
+                        name: 'MA5',
+                        type: 'line',
+                        data: calculateMA(5),
+                        smooth: true,
+                        lineStyle: {
+                            normal: {opacity: 0.5}
+                        }
+                    },
+                    {
+                        name: 'MA10',
+                        type: 'line',
+                        data: calculateMA(10),
+                        smooth: true,
+                        lineStyle: {    //标线的样式
+                            normal: {opacity: 0.5}
+                        }
+                    },
+                    {
+                        name: 'MA20',
+                        type: 'line',
+                        data: calculateMA(20),
+                        smooth: true,
+                        lineStyle: {
+                            normal: {opacity: 0.5}
+                        }
+                    },
+                    {
+                        name: 'MA30',
+                        type: 'line',
+                        data: calculateMA(30),
+                        smooth: true,
+                        lineStyle: {
+                            normal: {opacity: 0.5}
+                        }
+                    },
+
+                ]
+            };
+            // 使用刚指定的配置项和数据显示图表
+            myChart.setOption(option);
+            // 设置改变大小重绘窗口
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        });
+
+    </script>
+{% endblock %}

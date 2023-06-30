@@ -1,0 +1,65 @@
+{% extends 'adm_base.html' %}
+
+{% block title %}
+    查看评论详情
+{% endblock %}
+
+{% block content %}
+
+    <section class="content">
+
+        <div class="row">
+
+            <div class="col-md-12">
+                <!-- Message box -->
+                <div class="box box-success">
+                    <div class="box-header">
+                        <i class="fa fa-comments-o"></i>
+
+                        <h3 class="box-title">{{ comment.title }}</h3>
+
+                        <p>
+                            {{ comment.content }}
+                        </p>
+                        <middle class="text-muted pull-right"><i
+                                class="fa fa-clock-o"></i> {{ comment.comment_time | date:'Y年m月d日 H时m分' }} </middle>
+
+
+                    </div>
+
+                    <div class="box-body chat" id="chat-box">
+                        <!-- chat item -->
+                        {% for reply  in replys %}
+                            <div class="item">
+                                <img src="{{ reply.user_id.photo_url }}" alt="用户头像" class="online">
+                                <p class="message">
+                                    <b><a href="{% url 'tradingSystem:view_user_profile' reply.user_id.phone_number %}" class="name">
+                                        {{ reply.user_id.user_name }}</a>
+                                        回复<a href="{% url 'tradingSystem:view_user_profile' reply.comment.user_id.phone_number %}" class="name">
+                                            {{ reply.comment.user_id.user_name }}：
+                                        </a><small class="text-muted pull-right"><i
+                                                class="fa fa-clock-o"></i> {{ reply.reply_time | date:'Y年m月d日 H时m分' }} </small></b>
+                                    {{ reply.content }}
+                                </p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <!-- /.chat -->
+                    <div class="box-footer">
+                        <a href="{% url 'tradingSystem:adm_delete_comment' comment.id %}">
+                            <button type="button" id="user_delete" class="btn btn-danger pull-right">删除该评论</button>
+                        </a>
+                    </div>
+                </div>
+                <!-- /.box (chat box) -->
+            </div>
+
+        </div>
+        <div class="row">
+
+        </div>
+
+    </section>
+
+
+{% endblock %}

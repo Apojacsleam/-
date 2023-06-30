@@ -1,0 +1,370 @@
+{% extends "mybase.html" %}
+{% load static %}
+{% load staticfiles %}
+{% block title %}欢迎登录金融资产交易信息管理系统{% endblock %}
+
+{% block content %}
+
+    <section class="content-header">
+
+    </section>
+
+    <section class="content">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">股票信息列表</h3>
+                <div class="box-header ">
+                </div>
+
+                <div class="box-body">
+                    <table id="stock_table" class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th>股票代号</th>
+                            <th>股票名称</th>
+                            <th>当前持有手数</th>
+                            <th>当前股价（元）</th>
+                            <th>发行时间</th>
+                            <th>昨日收盘价（元）</th>
+                            <th>今日开盘价（元）</th>
+                            <th>股票交易所</th>
+                            <th>所处行业</th>
+                            <th>涨跌幅（%）</th>
+                            <th>详情</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {% for item in stocks %}
+                            {% if item.change_extent > 0 %}
+                                <tr style="color: red">
+                                    <td>{{ item.obj.stock_id.stock_id }}</td>
+
+                                    <td>{{ item.obj.stock_id.stock_name }}</td>
+
+                                    <td>{{ item.obj.num_of_shares }}</td>
+                                    <td>{{ item.price }}</td>
+                                    <td>{{ item.obj.stock_id.issuance_time }}</td>
+                                    <td>{{ item.obj.stock_id.closing_price_y }}</td>
+                                    <td>{{ item.obj.stock_id.open_price_t }}</td>
+                                    <td>{{ item.obj.stock_id.stock_type }}</td>
+                                    <td>{{ item.obj.stock_id.block }}</td>
+                                    <td>{{ item.obj.stock_id.change_extent }}</td>
+                                    <td style="vertical-align: middle">
+                                        <a href="{% url 'tradingSystem:out' item.obj.stock_id.stock_id %}">详情</a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr style="color: green">
+                                    <td>{{ item.obj.stock_id.stock_id }}</td>
+                                    <td>{{ item.obj.stock_id.stock_name }}</td>
+
+                                    <td>{{ item.obj.num_of_shares }}</td>
+                                    <td>{{ item.price }}</td>
+                                    <td>{{ item.obj.stock_id.issuance_time }}</td>
+                                    <td>{{ item.obj.stock_id.closing_price_y }}</td>
+                                    <td>{{ item.obj.stock_id.open_price_t }}</td>
+                                    <td>{{ item.obj.stock_id.stock_type }}</td>
+                                    <td>{{ item.obj.stock_id.block }}</td>
+                                    <td>{{ item.obj.stock_id.change_extent }}</td>
+                                    <td style="vertical-align: middle">
+                                        <a href="{% url 'tradingSystem:out' item.obj.stock_id.stock_id %}">详情</a>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </section>
+{% endblock %}
+{% block script %}
+    <script>
+
+        $(function () {
+            $(".select2").select2();
+        });
+        $(function () {
+            var table = $('#stock_table').DataTable({
+                dom: 'Bfrtip',
+                buttons: [],
+                "paging": true, <!-- 允许分页 -->
+                "lengthChange": true, <!-- 允许改变每页显示的行数 -->
+                "searching": true, <!-- 允许内容搜索 -->
+                "ordering": true, <!-- 允许排序 -->
+                "info": true, <!-- 显示信息 -->
+                "autoWidth": false, <!-- 固定宽度 -->
+                "language": {
+                    "sProcessing": "处理中...",
+                    "sLengthMenu": "显示 _MENU_ 项结果",
+                    "sZeroRecords": "没有匹配结果",
+                    "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                    "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
+                    "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                    "sInfoPostFix": "",
+                    "sSearch": "搜索:",
+                    "sUrl": "",
+                    "sEmptyTable": "表中数据为空",
+                    "sLoadingRecords": "载入中...",
+                    "sInfoThousands": ",",
+                    "oPaginate": {
+                        "sFirst": "首页",
+                        "sPrevious": "上页",
+                        "sNext": "下页",
+                        "sLast": "末页"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": 以升序排列此列",
+                        "sSortDescending": ": 以降序排列此列"
+                    }
+                },
+                "columnDefs": [{
+                    "searchable": false,
+                    "orderable": true,
+                    "targets": 0
+                }],
+                "order": [[0, 'asc']]
+            });
+        });
+
+        $(document).ready(function () {
+
+
+            //切割数组，把数组中的日期和数据分离，返回数组中的日期和数据
+            function splitData(rawData) {
+                var categoryData = [];
+                var values = [];
+
+                for (var i = 0; i < rawData.length; i++) {
+                    //splice 返回每组数组中被删除的第一项，即返回数组中被删除的日期
+                    //alert(rawData[i].splice(0, 1)[0]);
+                    //categoryData  日期  把返回的日期放到categoryData[]数组中
+                    categoryData.push(rawData[i].splice(0, 1)[0]);
+                    //alert(categoryData);
+
+                    //数据数组，即数组中除日期外的数据
+                    // alert(rawData[i]);
+                    values.push(rawData[i])
+                }
+                return {
+                    categoryData: categoryData, //数组中的日期 x轴对应的日期
+                    values: values              //数组中的数据 y轴对应的数据
+                };
+            }
+
+            //计算MA平均线，N日移动平均线=N日收盘价之和/N  dayCount要计算的天数(5,10,20,30)
+            function calculateMA(dayCount) {
+                var result = [];
+                for (var i = 0, len = data0.values.length; i < len; i++) {
+                    if (i < dayCount) {
+                        result.push('-');
+                        //alert(result);
+                        continue;   //结束单次循环，即不输出本次结果
+                    }
+                    var sum = 0;
+                    for (var j = 0; j < dayCount; j++) {
+                        //收盘价总和
+                        sum += data0.values[i - j][1];
+                        //alert(sum);
+                    }
+                    result.push(sum / dayCount);
+                    // alert(result);
+                }
+                return result;
+            }
+
+
+            option = {
+                title: {    //标题
+                    text: '上证指数',
+                    left: 0
+                },
+                tooltip: {  //提示框
+                    trigger: 'axis',    //触发类型：坐标轴触发
+                    axisPointer: {  //坐标轴指示器配置项
+                        type: 'cross'   //指示器类型，十字准星
+                    }
+                },
+                legend: {   //图例控件，点击图例控制哪些系列不现实
+                    data: ['日K', 'MA5', 'MA10', 'MA20', 'MA30']
+                },
+                grid: {     //直角坐标系
+                    show: true,
+                    left: '5%',    //grid组件离容器左侧的距离
+                    right: '10%',
+                    bottom: '5%',
+                    //backgroundColor:'#ccc'
+                },
+                xAxis: {
+                    type: 'category',   //坐标轴类型，类目轴
+                    data: data0.categoryData,
+                    //scale: true,  //只在数字轴中有效
+                    boundaryGap: false,    //刻度作为分割线，标签和数据点会在两个刻度上
+                    axisLine: {onZero: false},
+                    splitLine: {show: false},   //是否显示坐标轴轴线
+                    //splitNumber: 20,    //坐标轴的分割段数，预估值，在类目轴中无效
+                    min: 'dataMin', //特殊值，数轴上的最小值作为最小刻度
+                    max: 'dataMax'  //特殊值，数轴上的最大值作为最大刻度
+                },
+                yAxis: {
+                    scale: true,    //坐标刻度不强制包含零刻度
+                    splitArea: {
+                        show: true  //显示分割区域
+                    }
+                },
+                dataZoom: [     //用于区域缩放
+                    {
+                        filterMode: 'filter',    //当前数据窗口外的数据被过滤掉来达到数据窗口缩放的效果  默认值filter
+                        type: 'inside', //内置型数据区域缩放组件
+                        start: 50,      //数据窗口范围的起始百分比
+                        end: 100        //数据窗口范围的结束百分比
+                    },
+                    {
+                        show: true,
+                        type: 'slider', //滑动条型数据区域缩放组件
+                        y: '90%',
+                        start: 50,
+                        end: 100
+                    }
+                ],
+                series: [   //图表类型
+                    {
+                        name: '日K',
+                        type: 'candlestick',    //K线图
+                        data: data0.values,     //y轴对应的数据
+
+                        ////////////////////////图标标注/////////////////////////////
+
+                        markPoint: {    //图表标注
+                            label: {    //标注的文本
+                                normal: {   //默认不显示标注
+                                    show: true,
+                                    //position:['20%','30%'],
+                                    formatter: function (param) {   //标签内容控制器
+                                        return param != null ? Math.round(param.value) : '';
+                                    }
+                                }
+                            },
+                            data: [     //标注的数据数组
+                                {
+                                    name: 'XX标点',
+                                    coord: ['2013/5/31', 2300], //指定数据的坐标位置
+                                    value: 2300,
+                                    itemStyle: {    //图形样式
+                                        normal: {color: 'rgb(41,60,85)'}
+                                    }
+                                },
+                                {
+                                    name: 'highest value',
+                                    type: 'max',    //最大值
+                                    valueDim: 'highest'     //在highest维度上的最大值 最高价
+                                },
+                                {
+                                    name: 'lowest value',
+                                    type: 'min',
+                                    valueDim: 'lowest'  //最低价
+                                },
+                                {
+                                    name: 'average value on close',
+                                    type: 'average',
+                                    valueDim: 'close'   //收盘价
+                                }
+                            ],
+                            tooltip: {      //提示框
+                                formatter: function (param) {
+                                    return param.name + '<br>' + (param.data.coord || '');
+                                }
+                            }
+                        },
+
+/////////////////////////////////图标标线///////////////////////////
+
+                        markLine: {
+                            symbol: ['none', 'none'],   //标线两端的标记类型
+                            data: [
+                                [
+                                    {
+                                        name: 'from lowest to highest',
+                                        type: 'min',    //设置该标线为最小值的线
+                                        valueDim: 'lowest', //指定在哪个维度上的最小值
+                                        symbol: 'circle',
+                                        symbolSize: 10, //起点标记的大小
+                                        label: {    //normal默认，emphasis高亮
+                                            normal: {show: false},  //不显示标签
+                                            emphasis: {show: false} //不显示标签
+                                        }
+                                    },
+                                    {
+                                        type: 'max',
+                                        valueDim: 'highest',
+                                        symbol: 'circle',
+                                        symbolSize: 10,
+                                        label: {
+                                            normal: {show: false},
+                                            emphasis: {show: false}
+                                        }
+                                    }
+                                ],
+
+                                {
+                                    name: 'min line on close',
+                                    type: 'min',
+                                    valueDim: 'close'
+                                },
+                                {
+                                    name: 'max line on close',
+                                    type: 'max',
+                                    valueDim: 'close'
+                                }
+                            ]
+
+                        }
+
+                    },
+
+                    {   //MA5 5天内的收盘价之和/5
+                        name: 'MA5',
+                        type: 'line',
+                        data: calculateMA(5),
+                        smooth: true,
+                        lineStyle: {
+                            normal: {opacity: 0.5}
+                        }
+                    },
+                    {
+                        name: 'MA10',
+                        type: 'line',
+                        data: calculateMA(10),
+                        smooth: true,
+                        lineStyle: {    //标线的样式
+                            normal: {opacity: 0.5}
+                        }
+                    },
+                    {
+                        name: 'MA20',
+                        type: 'line',
+                        data: calculateMA(20),
+                        smooth: true,
+                        lineStyle: {
+                            normal: {opacity: 0.5}
+                        }
+                    },
+                    {
+                        name: 'MA30',
+                        type: 'line',
+                        data: calculateMA(30),
+                        smooth: true,
+                        lineStyle: {
+                            normal: {opacity: 0.5}
+                        }
+                    },
+
+                ]
+            };
+        });
+
+    </script>
+{% endblock %}
