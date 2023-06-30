@@ -1,5 +1,17 @@
 import tushare as ts
 import numpy as np
+import pymysql
+
+
+def GetProApi():
+    conn = pymysql.connect(host="tradingsystem.mysql.polardb.rds.aliyuncs.com", port=3306, user="trading", password="trading_1",
+                           database="stocktrading")
+    cursor = conn.cursor()
+    cursor.execute('select * from proapi')
+    data = cursor.fetchall()[0][0]
+    cursor.close()
+    conn.close()
+    return data
 
 
 def getAstock(t):
@@ -13,7 +25,7 @@ def getAstock(t):
     list: 包含股票代码和持有量的列表，格式为[[股票代码1, 持有量1], [股票代码2, 持有量2], ...]
     """
     # 使用tushare库获取股票数据
-    pro = ts.pro_api('75511519160650be789a0f32b316368fddf2474c0d32f563253d91e9')
+    pro = ts.pro_api(GetProApi())
     df = pro.stk_rewards(ts_code=t)
     # 删除含有缺失值的行
     m = df.dropna(axis=0)

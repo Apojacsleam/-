@@ -2,6 +2,17 @@ import akshare as ak
 import pandas as pd
 from sqlalchemy import create_engine
 import tushare as ts
+import pymysql
+
+def GetProApi():
+    conn = pymysql.connect(host="tradingsystem.mysql.polardb.rds.aliyuncs.com", port=3306, user="trading", password="trading_1",
+                           database="stocktrading")
+    cursor = conn.cursor()
+    cursor.execute('select * from proapi')
+    data = cursor.fetchall()[0][0]
+    cursor.close()
+    conn.close()
+    return data
 
 
 def GetStockInfo():
@@ -17,7 +28,7 @@ def GetStockInfo():
     df = df[['代码', '昨收', '最新价', '涨跌幅']]
     df.columns = ['stock_id', 'closing_price_y', 'open_price_t', 'change_extent']
     # 使用tushare库获取股票基本信息
-    pro = ts.pro_api('75511519160650be789a0f32b316368fddf2474c0d32f563253d91e9')
+    pro = ts.pro_api(GetProApi())
     data = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
     # 筛选上交所和深交所的股票信息
     data['suffix'] = data['ts_code'].str[-3:]

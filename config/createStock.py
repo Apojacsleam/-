@@ -22,7 +22,6 @@ def change_value():
             s.change_extent = 1.0 * extend / s.closing_price_y
             s.save()
             cnt += 1
-            print(cnt, s)
         except Exception:
             print(Exception)
 

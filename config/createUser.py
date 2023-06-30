@@ -108,7 +108,6 @@ def main():
         )
         user.save()
         cnt += 1
-        print(cnt)
 
 
 if __name__ == '__main__':

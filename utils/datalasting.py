@@ -4,6 +4,17 @@ import numpy as np
 import time
 
 
+def GetProApi():
+    conn = pymysql.connect(host="tradingsystem.mysql.polardb.rds.aliyuncs.com", port=3306, user="trading", password="trading_1",
+                           database="stocktrading")
+    cursor = conn.cursor()
+    cursor.execute('select * from proapi')
+    data = cursor.fetchall()[0][0]
+    cursor.close()
+    conn.close()
+    return data
+
+
 def portinStockInfo(t):
     """
     将股票信息导入数据库。
@@ -48,7 +59,7 @@ def getStockInfo(t):
 
     """
     # 使用tushare模块创建API对象
-    pro = ts.pro_api('75511519160650be789a0f32b316368fddf2474c0d32f563253d91e9')
+    pro = ts.pro_api(GetProApi())
     # 获取股票基本信息
     data = pro.stock_basic(exchange=t, list_status='L', fileds='ts_code,symbol,name,list_date,market')
     # 将DataFrame转换为NumPy数组
@@ -72,7 +83,7 @@ def getEveDayPrice(t):
 
     """
     # 使用tushare模块创建API对象
-    pro = ts.pro_api('75511519160650be789a0f32b316368fddf2474c0d32f563253d91e9')
+    pro = ts.pro_api(GetProApi())
     # 获取当前日期
     strt = time.strftime('%Y-%m-%d', time.localtime(time.time()))
     # 将日期字符串拆分为年、月、日

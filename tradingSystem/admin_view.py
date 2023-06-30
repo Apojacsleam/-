@@ -57,9 +57,6 @@ def adm_stock(request):
 
 def adm_stock_info(request, stock_id):
     choosenStock = StockInfo.objects.filter(stock_id=stock_id)
-    print(choosenStock)
-    print(choosenStock[0].stock_name)
-    print(choosenStock[0].block)
 
     if (choosenStock[0].stock_type == "上证"):
         hold_vol = getAstock.getAstock(stock_id + ".SH")
