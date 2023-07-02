@@ -1,3 +1,5 @@
+import random
+
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ObjectDoesNotExist
@@ -418,7 +420,6 @@ def stock_list(request):
     if is_market_open():
         RefreashStockInfo()
     stockl = models.StockInfo.objects.all()
-
     context = {
         "stock": stockl
     }
